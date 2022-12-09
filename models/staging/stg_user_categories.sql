@@ -2,28 +2,39 @@
 source_model:
   sample_dataset: user_categories
 derived_columns:
-  record_source: '!user_categories'
-  load_datetime: 'CURRENT_DATETIME("Asia/Tokyo")'
+  RECORD_SOURCE: '!user_categories'
 hashed_columns:
-  user_category_hashdiff:
+  USER_CATEGORY_HASHDIFF:
     is_hashdiff: true
     columns:
-      - 'slot'
-      - 'created_at'
-      - 'updated_at'
-  user_category_hk:
-    - 'user_id'
-    - 'category_id'
-  user_hk:
-    - 'user_id'
-  category_hk:
-    - 'category_id'
+      - 'SLOT'
+      - 'CREATED_AT'
+      - 'UPDATED_AT'
+  USER_CATEGORY_HK:
+    - 'USER_ID'
+    - 'CATEGORY_ID'
+  USER_HK:
+    - 'USER_ID'
+  CATEGORY_HK:
+    - 'CATEGORY_ID'
 {%- endset -%}
 
 {% set metadata_dict = fromyaml(yaml_metadata) %}
 
-{{ dbtvault.stage(include_source_columns=true
-                , source_model=metadata_dict['source_model']
-		, derived_columns=metadata_dict['derived_columns']
-		, hashed_columns=metadata_dict['hashed_columns']
-		, ranked_columns=none) }}
+{% set source_model = metadata_dict['source_model'] %}
+
+{% set derived_columns = metadata_dict['derived_columns'] %}
+
+{% set hashed_columns = metadata_dict['hashed_columns'] %}
+
+WITH staging AS (
+{{ dbtvault.stage(include_source_columns=true,
+                  source_model=source_model,
+                  derived_columns=derived_columns,
+                  hashed_columns=hashed_columns,
+                  ranked_columns=none) }}
+)
+
+SELECT *,
+       TO_DATE('{{ var('load_date') }}') AS LOAD_DATETIME
+FROM staging

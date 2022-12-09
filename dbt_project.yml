@@ -24,6 +24,8 @@ clean-targets:         # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
 
+vars:
+  load_date: '1992-01-08'
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
@@ -34,10 +36,8 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   dv_project:
     staging:
-      +schema: stg
       +materialized: view
     raw_vault:
-      +schema: raw
       hubs:
         +materialized: table
         

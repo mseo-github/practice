@@ -2,6 +2,8 @@ version: 2
 
 sources:
   - name: sample_dataset
+    database: SAMPLE_DATASET
+    schema: SAMPLE_DATASET
     tables:
       - name: categories
       - name: orders
